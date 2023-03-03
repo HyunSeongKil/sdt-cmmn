@@ -20,13 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 public class CmmnBeanUtilsTest {
 
   @Test
-  public void newInstanceTest() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+  public void newInstanceTest() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException, NoSuchMethodException, SecurityException {
     Dto dto = CmmnBeanUtils.newInstance(Dto.class);
     System.out.println(dto);
   }
 
   @Test
-  public void copyMapToObjTest() {
+  public void copyMapToObjTest() throws Exception {
     Map<String, Object> sourceMap = Map.of("name", "홍길동", "age", 20, "birth", new Date());
 
     Dto dto = CmmnBeanUtils.copyMapToObj(sourceMap, Dto.class, Map.of("id", "id", "name", "name"));
@@ -129,13 +130,15 @@ public class CmmnBeanUtilsTest {
   }
 
   @Test
-  public void dto_인스턴스_동적생성_테스트() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+  public void dto_인스턴스_동적생성_테스트() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException, NoSuchMethodException, SecurityException {
     Dto dto = CmmnBeanUtils.newInstance(Dto.class);
     assertTrue(null != dto);
   }
 
   @Test
-  public void entity_인스턴스_동적생성_테스트() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+  public void entity_인스턴스_동적생성_테스트() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException, NoSuchMethodException, SecurityException {
     Entity entity = CmmnBeanUtils.newInstance(Entity.class);
     assertTrue(null != entity);
   }
@@ -201,7 +204,6 @@ public class CmmnBeanUtilsTest {
   }
 }
 
-
 class Dto {
   private String id;
   private String name;
@@ -226,7 +228,6 @@ class Dto {
     super();
   }
 }
-
 
 class Entity {
   private String id;

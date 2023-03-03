@@ -92,9 +92,15 @@ public class AtchmnflHandler {
    * @return
    * @throws IOException
    * @throws ClientProtocolException
+   * @throws SecurityException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
    */
   @SuppressWarnings("unchecked")
-  public Optional<AtchmnflDto> getById(String atchmnflId) throws ClientProtocolException, IOException {
+  public Optional<AtchmnflDto> getById(String atchmnflId)
+      throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+      IllegalAccessException {
     HttpGet httpGet = getHttpGetInstance();
     httpGet.setURI(URI.create(apiUri + "/" + atchmnflId));
 
@@ -109,7 +115,9 @@ public class AtchmnflHandler {
   }
 
   @SuppressWarnings("unchecked")
-  public List<AtchmnflDto> getsByAtchmnflGroupId(String atchmnflGroupId) throws ClientProtocolException, IOException {
+  public List<AtchmnflDto> getsByAtchmnflGroupId(String atchmnflGroupId)
+      throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+      IllegalAccessException {
     HttpGet httpGet = getHttpGetInstance();
     httpGet.setURI(URI.create(apiUri + "/atchmnfl-groups/" + atchmnflGroupId + "/atchmnfls"));
 
@@ -127,10 +135,12 @@ public class AtchmnflHandler {
 
       List<Map<String, Object>> maps = (List) responseMap.get("data");
 
-      return maps
-          .stream()
-          .map(map -> CmmnBeanUtils.copyMapToObj(map, AtchmnflDto.class))
-          .collect(Collectors.toList());
+      List<AtchmnflDto> dtos = new ArrayList<>();
+      for (Map<String, Object> map : maps) {
+        dtos.add(CmmnBeanUtils.copyMapToObj(map, AtchmnflDto.class));
+      }
+
+      return dtos;
     }
 
   }
@@ -144,23 +154,31 @@ public class AtchmnflHandler {
    * @return
    * @throws IOException
    * @throws ClientProtocolException
+   * @throws SecurityException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
    */
   public Optional<File> getFirstFileByAtchmnflGroupId(String atchmnflGroupId)
-      throws ClientProtocolException, IOException {
+      throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+      IllegalAccessException {
     return getsByAtchmnflGroupId(atchmnflGroupId)
         .stream()
         .findFirst()
         .map(dto -> {
           try {
             return getFileById(dto.getAtchmnflId());
-          } catch (IOException e) {
+          } catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
+              | IllegalAccessException e) {
             throw new RuntimeException(e);
           }
         })
         .get();
   }
 
-  public List<File> getFilesByAtchmnflGroupId(String atchmnflGroupId) throws ClientProtocolException, IOException {
+  public List<File> getFilesByAtchmnflGroupId(String atchmnflGroupId)
+      throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+      IllegalAccessException {
     return this.getsByAtchmnflGroupId(atchmnflGroupId)
         .stream()
         .map(dto -> {
@@ -171,7 +189,8 @@ public class AtchmnflHandler {
             }
 
             return null;
-          } catch (IOException e) {
+          } catch (IOException | NoSuchFieldException | SecurityException | IllegalArgumentException
+              | IllegalAccessException e) {
             throw new RuntimeException(e);
           }
         })
@@ -187,8 +206,14 @@ public class AtchmnflHandler {
    * @return
    * @throws IOException
    * @throws ClientProtocolException
+   * @throws SecurityException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
    */
-  public Optional<File> getFileById(String atchmnflId) throws ClientProtocolException, IOException {
+  public Optional<File> getFileById(String atchmnflId)
+      throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+      IllegalAccessException {
     Optional<AtchmnflDto> opt = getById(atchmnflId);
     if (opt.isEmpty()) {
       return Optional.empty();
@@ -239,8 +264,14 @@ public class AtchmnflHandler {
    * atchmnflGroupId로 n개 파일 삭제
    * 
    * @param atchmnflGroupId
+   * @throws SecurityException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
    */
-  public void deletesByAtchmnflGroupId(String atchmnflGroupId) throws ClientProtocolException, IOException {
+  public void deletesByAtchmnflGroupId(String atchmnflGroupId)
+      throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+      IllegalAccessException {
     getsByAtchmnflGroupId(atchmnflGroupId)
         .stream()
         .forEach(dto -> deleteById(dto.getAtchmnflId()));
@@ -260,10 +291,17 @@ public class AtchmnflHandler {
   private List<AtchmnflDto> regist(List<MultipartFile> mfiles, Map<String, String> textMap) throws Exception {
     //
     Function<List<Map<String, Object>>, List<AtchmnflDto>> mapsToDtos = (atchmnflMaps) -> {
-      return atchmnflMaps
-          .stream()
-          .map(m -> CmmnBeanUtils.copyMapToObj(m, AtchmnflDto.class))
-          .collect(Collectors.toList());
+      List<AtchmnflDto> dtos = new ArrayList<>();
+
+      try {
+        for (Map<String, Object> map : atchmnflMaps) {
+          dtos.add(CmmnBeanUtils.copyMapToObj(map, AtchmnflDto.class));
+        }
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+
+      return dtos;
     };
 
     //

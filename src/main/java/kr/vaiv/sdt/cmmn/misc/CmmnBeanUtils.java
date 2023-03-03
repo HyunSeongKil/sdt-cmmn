@@ -501,8 +501,13 @@ public class CmmnBeanUtils {
    * @param srcMap
    * @param destClass
    * @return
+   * @throws SecurityException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
    */
-  public static <T> T copyMapToObj(Map<String, Object> srcMap, Class<T> destClass) {
+  public static <T> T copyMapToObj(Map<String, Object> srcMap, Class<T> destClass)
+      throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
     Map<String, String> mappingMap = new HashMap<>();
 
     Field[] fields = destClass.getDeclaredFields();
@@ -521,9 +526,14 @@ public class CmmnBeanUtils {
    * @param destClass
    * @param mappingMap key:sourceMap의 키, value:targetClass의 필드명
    * @return
+   * @throws SecurityException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
    */
   public static <T> T copyMapToObj(Map<String, Object> srcMap, Class<T> destClass,
-      Map<String, String> mappingMap) {
+      Map<String, String> mappingMap)
+      throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 
     class InnerClass {
       boolean containsKey(Map<String, Object> fromMap, String key) {
@@ -541,12 +551,26 @@ public class CmmnBeanUtils {
         return null != f;
       }
 
-      void setFieldValue(T destObj, String fieldName, Object value) {
-        try {
-          CmmnBeanUtils.setFieldValue(destObj, fieldName, value);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-          e.printStackTrace();
+      void setFieldValue(T destObj, String fieldName, Object value)
+          throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Field field = getField(destObj, fieldName);
+        if (field == null) {
+          return;
         }
+
+        field.setAccessible(true);
+        Class<?> fieldType = field.getType();
+        Class<?> valueType = value.getClass();
+
+        // 값 타입이 integer이고 필드 타입이 long이면 integer를 long으로 변환하여 저장
+        if (fieldType == Long.class && valueType == Integer.class) {
+          CmmnBeanUtils.setFieldValue(destObj, fieldName, Long.parseLong(value.toString()));
+          return;
+        }
+
+        // System.out.println(fieldName + "\t" + fieldType + "\t" + valueType);
+        CmmnBeanUtils.setFieldValue(destObj, fieldName, value);
+
       }
     }
     ;//
