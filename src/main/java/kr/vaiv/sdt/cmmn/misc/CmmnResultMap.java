@@ -3,6 +3,8 @@ package kr.vaiv.sdt.cmmn.misc;
 import java.util.HashMap;
 import org.springframework.data.domain.Pageable;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * result map
@@ -10,7 +12,6 @@ import org.springframework.data.domain.Pageable;
  * @since 20210721
  */
 public class CmmnResultMap extends HashMap<String, Object> {
-
 
   /**
    * 생성 with 데이터
@@ -24,7 +25,6 @@ public class CmmnResultMap extends HashMap<String, Object> {
     return of(data);
   }
 
-
   /**
    * 생성
    * 
@@ -37,11 +37,10 @@ public class CmmnResultMap extends HashMap<String, Object> {
     return map;
   }
 
-
   /**
    * 생성
    * 
-   * @param data 데이터
+   * @param data       데이터
    * @param resultCode 결과 코드
    * @return 인스턴스
    */
@@ -52,12 +51,11 @@ public class CmmnResultMap extends HashMap<String, Object> {
     return map;
   }
 
-
   /**
    * 생성
    * 
-   * @param data 데이터
-   * @param resultCode 결과 코드
+   * @param data          데이터
+   * @param resultCode    결과 코드
    * @param resultMessage 결과 메시지
    * @return 인스턴스
    */
@@ -70,13 +68,12 @@ public class CmmnResultMap extends HashMap<String, Object> {
     return map;
   }
 
-
   /**
    * 생성
    * 
-   * @param data 데이터
-   * @param page 페이지 인덱스. ※주의:0부터 시작
-   * @param size 페이지 크기
+   * @param data          데이터
+   * @param page          페이지 인덱스. ※주의:0부터 시작
+   * @param size          페이지 크기
    * @param totalElements 전체 건수
    * @return
    */
@@ -90,18 +87,17 @@ public class CmmnResultMap extends HashMap<String, Object> {
     return map;
   }
 
-
   /**
    * 생성
-   * @param data 데이터
-   * @param pageable 페이지 정보
+   * 
+   * @param data          데이터
+   * @param pageable      페이지 정보
    * @param totalElements 전체 건수
    * @return
    */
   public static CmmnResultMap of(Object data, Pageable pageable, Long totalElements) {
     return of(data, pageable.getPageNumber(), pageable.getPageSize(), totalElements);
   }
-
 
   /**
    * 데이터 설정
@@ -112,7 +108,6 @@ public class CmmnResultMap extends HashMap<String, Object> {
     this.put(CmmnConst.DATA, data);
   }
 
-
   /**
    * 결과 코드 설정
    * 
@@ -121,7 +116,6 @@ public class CmmnResultMap extends HashMap<String, Object> {
   public void putResultCode(String resultCode) {
     this.put(CmmnConst.RESULT_CODE, resultCode);
   }
-
 
   /**
    * 결과 메시지 설정
@@ -132,7 +126,6 @@ public class CmmnResultMap extends HashMap<String, Object> {
     this.put(CmmnConst.RESULT_MESSAGE, resultMessage);
   }
 
-
   /**
    * 페이지 인덱스 설정
    * 
@@ -141,7 +134,6 @@ public class CmmnResultMap extends HashMap<String, Object> {
   public void putPage(Integer page) {
     this.put("page", page);
   }
-
 
   /**
    * 페이지 크기 설정
@@ -152,7 +144,6 @@ public class CmmnResultMap extends HashMap<String, Object> {
     this.put("size", size);
   }
 
-
   /**
    * 전체 갯수 설정
    * 
@@ -160,5 +151,9 @@ public class CmmnResultMap extends HashMap<String, Object> {
    */
   public void putTotalElements(Long totalElements) {
     this.put("totalElements", totalElements);
+  }
+
+  public String toJsonString() throws JsonProcessingException {
+    return new ObjectMapper().writeValueAsString(this);
   }
 }
