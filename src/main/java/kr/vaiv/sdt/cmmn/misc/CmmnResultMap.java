@@ -153,6 +153,12 @@ public class CmmnResultMap extends HashMap<String, Object> {
     this.put("totalElements", totalElements);
   }
 
+  /**
+   * @deprecated from 1.23.0308
+   * @see CmmnBeanUtils.toJsonString(Object)
+   * @return
+   * @throws JsonProcessingException
+   */
   public String toJsonString() throws JsonProcessingException {
     return new ObjectMapper().writeValueAsString(this);
   }
