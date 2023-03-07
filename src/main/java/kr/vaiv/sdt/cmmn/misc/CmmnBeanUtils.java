@@ -20,6 +20,9 @@ import org.hibernate.validator.internal.util.privilegedactions.NewInstance;
 import org.reflections.*;
 import org.reflections.scanners.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * bean 관련 유틸
  */
@@ -632,5 +635,14 @@ public class CmmnBeanUtils {
     }
 
     return map;
+  }
+
+  public static String toJsonString(Object obj) throws JsonProcessingException {
+    if (CmmnUtils.isNull(obj)) {
+      return "";
+    }
+
+    return new ObjectMapper().writeValueAsString(obj);
+
   }
 }
