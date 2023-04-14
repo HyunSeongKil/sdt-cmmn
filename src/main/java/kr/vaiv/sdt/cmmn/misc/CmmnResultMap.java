@@ -1,6 +1,8 @@
 package kr.vaiv.sdt.cmmn.misc;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.data.domain.Pageable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,6 +14,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @since 20210721
  */
 public class CmmnResultMap extends HashMap<String, Object> {
+
+  /**
+   * 빈값 리턴
+   * 
+   * @return
+   */
+  public static CmmnResultMap empty() {
+    return withData(Map.of());
+  }
 
   /**
    * 생성 with 데이터

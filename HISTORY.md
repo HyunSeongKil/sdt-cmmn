@@ -1,3 +1,7 @@
+## v1.23.0414
+
+- CmmnResultMap.empty() 추가
+
 ## v1.23.0310
 
 - MIN_1, MIN_10, MIN_30, HOUR_1 추가
