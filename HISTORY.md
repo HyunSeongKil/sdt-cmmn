@@ -1,3 +1,15 @@
+## v1.23.0414
+
+- CmmnResultMap.empty() 추가
+
+## v1.23.0310
+
+- MIN_1, MIN_10, MIN_30, HOUR_1 추가
+
+## 2023-03-07 v1.23.0307
+
+- CmmnResultMap.toJsonString() 메소드 추가
+
 ## 2023-03-03 v1.23.0303
 
 - 파일 추가

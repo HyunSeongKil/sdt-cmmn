@@ -180,11 +180,14 @@ public class AtchmnflHandler {
   public List<File> getFilesByAtchmnflGroupId(String atchmnflGroupId)
       throws ClientProtocolException, IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
       IllegalAccessException {
+    log.debug("atchmnflGroupId: {}", atchmnflGroupId);
+
     return this.getsByAtchmnflGroupId(atchmnflGroupId)
         .stream()
         .map(dto -> {
+          log.debug("dto: {}", dto);
           try {
-            Optional<File> opt = getFileById(atchmnflGroupId);
+            Optional<File> opt = getFileById(dto.getAtchmnflId());
             if (opt.isPresent()) {
               return opt.get();
             }
@@ -278,6 +281,81 @@ public class AtchmnflHandler {
         .forEach(dto -> deleteById(dto.getAtchmnflId()));
   }
 
+  //
+  List<AtchmnflDto> mapsToDtos(List<Map<String, Object>> atchmnflMaps) {
+    List<AtchmnflDto> dtos = new ArrayList<>();
+
+    try {
+      for (Map<String, Object> map : atchmnflMaps) {
+        dtos.add(CmmnBeanUtils.copyMapToObj(map, AtchmnflDto.class));
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    return dtos;
+  };
+
+  //
+  void deleteAtchmnfls(List<Map<String, Object>> atchmnflMaps) {
+    atchmnflMaps
+        .stream()
+        .forEach(map -> {
+          deleteById(map.get("atchmnflId").toString());
+        });
+  };
+
+  //
+  void deleteTmpFiles(List<File> tmpFiles) {
+    tmpFiles
+        .stream()
+        .forEach(tmpFile -> {
+          if (tmpFile.exists()) {
+            tmpFile.delete();
+          }
+        });
+  };
+
+  //
+  List<File> mfilesToTmpFiles(List<MultipartFile> mfiles2) {
+    return mfiles2
+        .stream()
+        .map(mfile -> {
+          File tmpFile = CmmnUtils
+              .getTempPath()
+              .resolve(mfile.getOriginalFilename())
+              .toFile();
+
+          try {
+            mfile.transferTo(tmpFile);
+          } catch (IllegalStateException | IOException e) {
+            throw new RuntimeException(e);
+          }
+
+          return tmpFile;
+        })
+        .collect(Collectors.toList());
+  };
+
+  //
+  MultipartEntityBuilder createMultipartEntityBuilder(List<File> tmpFiles, Map<String, String> textMap) {
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create().setCharset(StandardCharsets.UTF_8);
+
+    tmpFiles
+        .stream()
+        .forEach(destFile -> {
+          builder.addBinaryBody("files", destFile);
+        });
+
+    textMap
+        .keySet()
+        .forEach(key -> {
+          builder.addTextBody(key, textMap.get(key));
+        });
+
+    return builder;
+  };
+
   /**
    * 파일 등록
    * 파일과 텍스트를 같이 전달
@@ -290,93 +368,18 @@ public class AtchmnflHandler {
    */
   @SuppressWarnings("unchecked")
   private List<AtchmnflDto> regist(List<MultipartFile> mfiles, Map<String, String> textMap) throws Exception {
-    //
-    Function<List<Map<String, Object>>, List<AtchmnflDto>> mapsToDtos = (atchmnflMaps) -> {
-      List<AtchmnflDto> dtos = new ArrayList<>();
-
-      try {
-        for (Map<String, Object> map : atchmnflMaps) {
-          dtos.add(CmmnBeanUtils.copyMapToObj(map, AtchmnflDto.class));
-        }
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-
-      return dtos;
-    };
 
     //
-    Consumer<List<Map<String, Object>>> deleteAtchmnfls = (atchmnflMaps) -> {
-      atchmnflMaps
-          .stream()
-          .forEach(map -> {
-            deleteById(map.get("atchmnflId").toString());
-          });
-    };
+    List<File> tmpFiles = mfilesToTmpFiles(mfiles);
+    log.debug("{}", tmpFiles);
 
     //
-    Consumer<List<File>> deleteTmpFiles = (tmpFiles) -> {
-      tmpFiles
-          .stream()
-          .forEach(tmpFile -> {
-            if (tmpFile.exists()) {
-              tmpFile.delete();
-            }
-          });
-    };
-
-    //
-    Function<List<MultipartFile>, List<File>> mfilesToTmpFiles = (mfiles2) -> {
-      return mfiles2
-          .stream()
-          .map(mfile -> {
-            File tmpFile = CmmnUtils
-                .getTempPath()
-                .resolve(mfile.getOriginalFilename())
-                .toFile();
-
-            try {
-              mfile.transferTo(tmpFile);
-            } catch (IllegalStateException | IOException e) {
-              throw new RuntimeException(e);
-            }
-
-            return tmpFile;
-          })
-          .collect(Collectors.toList());
-
-    };
-
-    //
-    BiFunction<List<File>, Map<String, String>, MultipartEntityBuilder> createMultipartEntityBuilder = (tmpFiles,
-        map) -> {
-      MultipartEntityBuilder builder = MultipartEntityBuilder.create().setCharset(StandardCharsets.UTF_8);
-
-      tmpFiles
-          .stream()
-          .forEach(destFile -> {
-            builder.addBinaryBody("files", destFile);
-          });
-
-      map
-          .keySet()
-          .forEach(key -> {
-            builder.addTextBody(key, textMap.get(key));
-          });
-
-      return builder;
-    };
-
-    ////
-    //
-    List<File> tmpFiles = mfilesToTmpFiles.apply(mfiles);
-
-    //
-    MultipartEntityBuilder builder = createMultipartEntityBuilder.apply(tmpFiles, textMap);
+    MultipartEntityBuilder builder = createMultipartEntityBuilder(tmpFiles, textMap);
 
     //
     HttpPost httpPost = getHttpPostInstance();
     httpPost.setEntity(builder.build());
+    log.debug("{}", httpPost);
 
     //
     List<Map<String, Object>> atchmnflMaps = null;
@@ -388,19 +391,20 @@ public class AtchmnflHandler {
 
       Map<String, Object> map = new ObjectMapper().readValue(content, HashMap.class);
       atchmnflMaps = (List<Map<String, Object>>) map.get(CmmnConst.DATA);
+      log.debug("{}", atchmnflMaps);
 
-      return mapsToDtos.apply(atchmnflMaps);
+      return mapsToDtos(atchmnflMaps);
 
     } catch (Exception e) {
       if (atchmnflMaps != null) {
-        deleteAtchmnfls.accept(atchmnflMaps);
+        deleteAtchmnfls(atchmnflMaps);
       }
 
       throw e;
 
     } finally {
       // 임시 파일 삭제
-      deleteTmpFiles.accept(tmpFiles);
+      deleteTmpFiles(tmpFiles);
     }
   }
 
