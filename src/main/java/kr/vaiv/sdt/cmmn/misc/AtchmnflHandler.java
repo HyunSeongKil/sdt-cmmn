@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -349,7 +350,7 @@ public class AtchmnflHandler {
     //
     BiFunction<List<File>, Map<String, String>, MultipartEntityBuilder> createMultipartEntityBuilder = (tmpFiles,
         map) -> {
-      MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+      MultipartEntityBuilder builder = MultipartEntityBuilder.create().setCharset(StandardCharsets.UTF_8);
 
       tmpFiles
           .stream()
