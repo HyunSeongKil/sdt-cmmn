@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'kr.vaiv'
-version = '1.23.0414'
+version = '1.23.0416'
 sourceCompatibility = '11'
 
 configurations {

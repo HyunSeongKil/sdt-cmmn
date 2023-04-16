@@ -1,3 +1,7 @@
+## v1.23.0416
+
+- AtchmnflHandler.createMultipartEntityBuilder()에 chartset 설정 추가
+
 ## v1.23.0414
 
 - CmmnResultMap.empty() 추가

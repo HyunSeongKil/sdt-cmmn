@@ -1,16 +1,17 @@
 package kr.vaiv.sdt.cmmn.domain;
 
-import lombok.*;
+import java.time.LocalDateTime;
 
-/**
- * @deprecated 20230416
- * @see CmmnAtchmnflDto
- */
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AtchmnflDto {
+public class CmmnAtchmnflDto {
   private String atchmnflId;
 
   private String atchmnflGroupId;
@@ -25,5 +26,9 @@ public class AtchmnflDto {
 
   private String contentType;
 
-  private String deleteAt;
+  private String registerId;
+  private LocalDateTime registDt;
+  private String updaterId;
+  private LocalDateTime updateDt;
+
 }
