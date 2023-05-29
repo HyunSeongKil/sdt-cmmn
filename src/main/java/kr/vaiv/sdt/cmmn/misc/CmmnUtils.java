@@ -15,6 +15,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,6 +73,44 @@ public class CmmnUtils {
   }
 
   /**
+   * 
+   * @param str camelToSnake
+   * @return camel_to_snake
+   */
+  public static String camelToSnake(String str) {
+    // Regular Expression
+    String regex = "([a-z])([A-Z]+)";
+
+    // Replacement string
+    String replacement = "$1_$2";
+
+    // Replace the given regex
+    // with replacement string
+    // and convert it to lower case.
+    str = str
+        .replaceAll(regex, replacement)
+        .toLowerCase();
+
+    // return string
+    return str;
+  }
+
+  /**
+   * 
+   * @param str snake_to_camel
+   * @return snakeToCamel
+   */
+  public static String snakeToCamel(String str) {
+    return str.indexOf("_") != -1
+        ? str.substring(0, str.indexOf("_")) +
+            Arrays
+                .stream(str.substring(str.indexOf("_") + 1).split("_"))
+                .map(s -> Character.toUpperCase(s.charAt(0)) + s.substring(1))
+                .collect(Collectors.joining())
+        : str;
+  }
+
+  /**
    * 8자리의 랜덤 문자열 생성
    */
   public static String createRandom8String() {
@@ -83,6 +124,27 @@ public class CmmnUtils {
    */
   public static String createRandom8String(String pre) {
     return pre + CmmnUtils.shortUuid();
+  }
+
+  /**
+   * 오래된 디렉터리/파일 모두(하위 디렉터리/파일) 삭제
+   * 
+   * @param basePath 기준이 되는 경로
+   * @param millis   기준이 되는 밀리초
+   * @throws IOException
+   */
+  public static void deleteOldPath(Path basePath, long millis) throws IOException {
+    Files
+        .walk(basePath)
+        .forEach(path -> {
+          try {
+            if (path.toFile().lastModified() < millis) {
+              FileUtils.forceDelete(path.toFile());
+            }
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+        });
   }
 
   /**
