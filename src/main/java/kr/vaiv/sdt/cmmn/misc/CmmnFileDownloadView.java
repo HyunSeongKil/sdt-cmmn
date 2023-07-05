@@ -14,7 +14,6 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.view.AbstractView;
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  * 파일 다운로드
  */
@@ -36,16 +35,22 @@ public class CmmnFileDownloadView extends AbstractView {
   }
 
   @Override
-  protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+  protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
     setContentType("application/octet-stream; utf-8");
 
     for (Map.Entry<String, Object> entry : model.entrySet()) {
       log.debug("{}\t{}", entry.getKey(), entry.getValue());
     }
 
+    if (model.get(FILE) == null) {
+      log.error("FILE IS NULL");
+      return;
+    }
+
     File file = (File) model.get(FILE);
-    if (null == file || !file.exists()) {
-      log.error("FILE NOT FOUND");
+    if (!file.exists()) {
+      log.error("{} NOT FOUND", file.toPath());
       return;
       // throw new FileNotFoundException();
     }
@@ -75,7 +80,6 @@ public class CmmnFileDownloadView extends AbstractView {
     }
 
     out.flush();
-
 
     // option 2
     // FileInputStream fis = null;
