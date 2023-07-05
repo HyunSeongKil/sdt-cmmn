@@ -39,7 +39,7 @@ public class CmmnInterceptor implements HandlerInterceptor {
       @Nullable ModelAndView modelAndView) throws Exception {
 
     // 소요시간
-    log.debug("<< DURATION:{}ms\t{}\t{}", (new Date().getTime() - ((Date) request.getAttribute("startDt")).getTime()),
+    log.info("<< DURATION:{}ms\t{}\t{}", (new Date().getTime() - ((Date) request.getAttribute("startDt")).getTime()),
         request.getMethod(),
         request.getRequestURI());
   }
