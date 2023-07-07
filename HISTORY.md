@@ -1,3 +1,9 @@
+## v1.23.0707
+
+- CmmnFileDownloadView의 package 변경
+  - misc.CmmnFileDownloadView => view.CmmnFileDownloadView
+- refactoring CmmnFileDownloadView
+
 ## v1.23.0529
 
 - CmmnUtils.deleteOldPath(Path, long) 추가

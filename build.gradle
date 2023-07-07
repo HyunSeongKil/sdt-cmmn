@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'kr.vaiv'
-version = '1.23.0705'
+version = '1.23.0707'
 sourceCompatibility = '11'
 
 configurations {
@@ -65,6 +65,8 @@ dependencies {
 
 	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
 	implementation 'org.apache.httpcomponents:httpmime:4.5.14'
+
+	// implementation 'com.google.guava:guava:32.1.1-jre'
 
 }
 
