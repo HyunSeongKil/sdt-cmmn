@@ -1,13 +1,13 @@
 plugins {
-	id 'org.springframework.boot' version '2.4.4'
+	id 'org.springframework.boot' version '3.1.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'org.asciidoctor.convert' version '1.5.8'
 	id 'java'
 }
 
 group = 'kr.vaiv'
-version = '1.23.0707'
-sourceCompatibility = '11'
+version = '3.23.1107'
+sourceCompatibility = '17'
 
 configurations {
 	compileOnly {
@@ -59,7 +59,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	testRuntimeOnly('io.jsonwebtoken:jjwt-impl:0.12.3')
+	runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.12.3')
 
 	implementation 'net.coobird:thumbnailator:0.4.19'
 
@@ -67,6 +69,10 @@ dependencies {
 	implementation 'org.apache.httpcomponents:httpmime:4.5.14'
 
 	// implementation 'com.google.guava:guava:32.1.1-jre'
+
+	implementation('jakarta.xml.bind:jakarta.xml.bind-api:4.0.1') {
+		exclude group: 'jakarta.activation', module: 'jakarta.activation-api'
+	}
 
 }
 

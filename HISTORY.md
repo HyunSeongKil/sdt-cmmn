@@ -1,3 +1,14 @@
+## v3.23.1107
+
+- JDK 17 지원
+- Spring Boot 3.x이상 지원
+- JJWT 버전 업
+
+## v1.23.0814
+
+- CmmnConst.MIN_1, MIN_10, MIN_30 결함 수정
+- CmmnConst.HOUR_1 => MIN_60
+
 ## v1.23.0707
 
 - CmmnFileDownloadView의 package 변경

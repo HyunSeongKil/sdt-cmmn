@@ -1,19 +1,14 @@
 package kr.vaiv.sdt.cmmn.misc;
 
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import javax.crypto.SecretKey;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -27,6 +22,10 @@ public class CmmnJwtUtils {
    */
   public static final String SECRET_KEY = "hyunseongkil,aha1492@outlook.kr,01055411492";
 
+  public static SecretKey createSecretKey(String key) {
+    return Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
+  }
+
   /**
    * 토큰 생성
    * 만료시간 기본 10분으로 설정
@@ -39,7 +38,7 @@ public class CmmnJwtUtils {
     Date exp = new Date();
     exp.setTime(exp.getTime() + (1000 * 60 * 10)); // 10min
 
-    return createToken(SECRET_KEY, bodyMap, exp);
+    return createToken(bodyMap, exp);
   }
 
   /**
@@ -63,31 +62,14 @@ public class CmmnJwtUtils {
    * @param exp       만료시간
    * @return
    */
+
   public static String createToken(String secretKey, Map<String, Object> bodyMap, Date exp) {
-
-    //
-    Map<String, Object> headerMap = new HashMap<>();
-    headerMap.put("typ", "JWT");
-    headerMap.put("alg", "HS256");
-
-    //
-    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
-    Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-
-    //
-    String token = Jwts.builder()
-        .setHeader(headerMap)
-        .setClaims(bodyMap)
-        .setExpiration(exp)
-        .signWith(signatureAlgorithm, signingKey)
-        .setIssuedAt(new Date(System.currentTimeMillis()))
+    return Jwts
+        .builder()
+        .claims(bodyMap)
+        .expiration(exp)
+        .signWith(createSecretKey(secretKey))
         .compact();
-
-    //
-    log.info("body: {} token: {}", bodyMap, token);
-    return token;
-
   }
 
   /**
@@ -99,7 +81,11 @@ public class CmmnJwtUtils {
    */
   public static boolean validateToken(String secretKey, String token) {
     try {
-      getBody(secretKey, token);
+      Jwts
+          .parser()
+          .verifyWith(createSecretKey(secretKey))
+          .build()
+          .parseSignedClaims(token);
       return true;
     } catch (Exception e) {
       return false;
@@ -135,30 +121,23 @@ public class CmmnJwtUtils {
    * @return
    */
   public static Map<String, Object> getBody(String secretKey, String token) {
-    try {
-      Claims claims = Jwts.parser()
-          .setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
-          .parseClaimsJws(token)
-          .getBody();
+    Map<String, Object> map = new HashMap<>();
 
-      //
-      Map<String, Object> map = new HashMap<>();
-      Iterator<String> iter = claims.keySet().iterator();
-      while (iter.hasNext()) {
-        String key = iter.next();
-
-        map.put(key, claims.get(key));
-      }
-
-      //
+    if (!validateToken(secretKey, token)) {
       return map;
-
-    } catch (ExpiredJwtException exception) {
-      log.error("{}", "jwt 시간 만료");
-      throw exception;
-    } catch (JwtException exception) {
-      log.error("{}", "jwt 오류");
-      throw exception;
     }
+
+    Jwts
+        .parser()
+        .verifyWith(createSecretKey(SECRET_KEY))
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .entrySet()
+        .forEach(entry -> {
+          map.put(entry.getKey(), entry.getValue());
+        });
+
+    return map;
   }
 }

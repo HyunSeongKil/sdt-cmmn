@@ -9,6 +9,8 @@ import java.net.http.HttpRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,7 @@ public class CmmnBeanUtilsTest {
 
   @Test
   @DisplayName("uri로 HttpRequest 생성 테스트")
+  @Disabled(value = "duplate 서비스 down")
   public void createHttpRequestTest1() throws IOException, InterruptedException {
     String uri = "https://map.duplanet.kr/api/land-rank/getSelectRank";
 
@@ -55,6 +58,7 @@ public class CmmnBeanUtilsTest {
 
   @Test
   @DisplayName("uri, param으로 HttpRequest 생성 테스트")
+  @Disabled(value = "duplate 서비스 down")
   public void createHttpRequestTest2() throws IOException, InterruptedException {
     String uri = "https://map.duplanet.kr/api/land-rank/getSelectRank";
     Map<String, Object> param = Map.of("userSub", "", "totalCnt", 10);
@@ -72,6 +76,7 @@ public class CmmnBeanUtilsTest {
 
   @Test
   @DisplayName("uri, param, header로 HttpRequest 생성 테스트")
+  @Disabled(value = "duplate 서비스 down")
   public void createHttpRequestTest3() throws IOException, InterruptedException {
     String uri = "https://map.duplanet.kr/api/land-rank/getSelectRank";
     Map<String, Object> param = Map.of("userSub", "", "totalCnt", 10);
@@ -92,6 +97,7 @@ public class CmmnBeanUtilsTest {
 
   @Test
   @DisplayName("uri로 get 방식 요청 테스트")
+  @Disabled(value = "duplate 서비스 down")
   public void requestByGetTest1() throws IOException, InterruptedException {
     String uri = "https://map.duplanet.kr/api/land-rank/getSelectRank";
 
@@ -104,6 +110,7 @@ public class CmmnBeanUtilsTest {
 
   @Test
   @DisplayName("uri,param으로 get 방식 요청 테스트")
+  @Disabled(value = "duplate 서비스 down")
   public void requestByGetTest2() throws IOException, InterruptedException {
     String uri = "https://map.duplanet.kr/api/land-rank/getSelectRank";
     Map<String, Object> param = Map.of("userSub", "", "totalCnt", 10);
@@ -117,6 +124,7 @@ public class CmmnBeanUtilsTest {
 
   @Test
   @DisplayName("uri,param,header로 get 방식 요청 테스트")
+  @Disabled(value = "duplate 서비스 down")
   public void requestByGetTest3() throws IOException, InterruptedException {
     String uri = "https://map.duplanet.kr/api/land-rank/getSelectRank";
     Map<String, Object> param = Map.of("userSub", "", "totalCnt", 10);
