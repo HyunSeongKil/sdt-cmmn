@@ -6,9 +6,18 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
 
+import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Test;
 
+import jakarta.validation.constraints.AssertTrue;
+
 public class CmmnUtilsTest {
+
+  @Test
+  void uuid12Test() {
+    String uuid12 = CmmnUtils.uuid12();
+    org.springframework.util.Assert.isTrue(uuid12.length() == 12, "성공");
+  }
 
   @Test
   void getMemoryInfoMapTest() {
