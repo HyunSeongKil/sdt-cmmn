@@ -72,6 +72,15 @@ public class CmmnUtils {
   }
 
   /**
+   * 짧은(uuid의 앞 12자리) uuid 생성
+   * 
+   * @return
+   */
+  public static String uuid12() {
+    return uuid().substring(0, 12);
+  }
+
+  /**
    * 
    * @param str camelToSnake
    * @return camel_to_snake
