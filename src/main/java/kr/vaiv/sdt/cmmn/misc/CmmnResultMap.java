@@ -176,7 +176,7 @@ public class CmmnResultMap extends HashMap<String, Object> {
    * 
    * @param totalElements 전체 개수
    */
-  @Deprecated
+  @Deprecated(since = "20231129 ", forRemoval = true)
   public void putTotalElements(Long totalElements) {
     this.put("totalElements", totalElements);
   }
