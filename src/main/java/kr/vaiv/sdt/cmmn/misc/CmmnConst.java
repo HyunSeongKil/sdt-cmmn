@@ -10,11 +10,11 @@ public class CmmnConst {
     public static final String Y = "Y";
     public static final String N = "N";
 
-    @Deprecated(since = "20231129 @see kr.vaiv.sdt.cmmn.misc.CmmnConst#TOTAL_COUNT")
+    @Deprecated(since = "20231129 @see kr.vaiv.sdt.cmmn.misc.CmmnConst#TOTAL_COUNT", forRemoval = true)
     public static final String TOTCNT = "totcnt";
-    @Deprecated(since = "20231129 @see kr.vaiv.sdt.cmmn.misc.CmmnConst#CODE")
+    @Deprecated(since = "20231129 @see kr.vaiv.sdt.cmmn.misc.CmmnConst#CODE", forRemoval = true)
     public static final String RESULT_CODE = "resultCode";
-    @Deprecated(since = "20231129 @see kr.vaiv.sdt.cmmn.misc.CmmnConst#MESSAGE")
+    @Deprecated(since = "20231129 @see kr.vaiv.sdt.cmmn.misc.CmmnConst#MESSAGE", forRemoval = true)
     public static final String RESULT_MESSAGE = "resultMessage";
 
     public static final String DATA = "data";

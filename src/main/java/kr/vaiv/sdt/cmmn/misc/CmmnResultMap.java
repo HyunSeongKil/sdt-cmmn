@@ -3,6 +3,7 @@ package kr.vaiv.sdt.cmmn.misc;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.data.domain.Pageable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -65,16 +66,19 @@ public class CmmnResultMap extends HashMap<String, Object> {
   /**
    * 생성
    * 
-   * @param data          데이터
-   * @param resultCode    결과 코드
-   * @param resultMessage 결과 메시지
+   * @param data    데이터
+   * @param code    결과 코드
+   * @param message 결과 메시지
    * @return 인스턴스
    */
-  public static CmmnResultMap of(Object data, String resultCode, Object resultMessage) {
+  public static CmmnResultMap of(Object data, String code, Object message) {
     CmmnResultMap map = new CmmnResultMap();
     map.put(CmmnConst.DATA, data);
-    map.put(CmmnConst.RESULT_CODE, resultCode);
-    map.put(CmmnConst.RESULT_MESSAGE, resultMessage);
+    map.put(CmmnConst.RESULT_CODE, code);
+    map.put(CmmnConst.RESULT_MESSAGE, message);
+
+    map.put(CmmnConst.CODE, code);
+    map.put(CmmnConst.MESSAGE, message);
 
     return map;
   }
@@ -82,18 +86,20 @@ public class CmmnResultMap extends HashMap<String, Object> {
   /**
    * 생성
    * 
-   * @param data          데이터
-   * @param page          페이지 인덱스. ※주의:0부터 시작
-   * @param size          페이지 크기
-   * @param totalElements 전체 건수
+   * @param data       데이터
+   * @param page       페이지 인덱스. ※주의:0부터 시작
+   * @param size       페이지 크기
+   * @param totalCount 전체 건수
    * @return
    */
-  public static CmmnResultMap of(Object data, Integer page, Integer size, Long totalElements) {
+  public static CmmnResultMap of(Object data, Integer page, Integer size, Long totalCount) {
     CmmnResultMap map = new CmmnResultMap();
     map.put(CmmnConst.DATA, data);
     map.put("page", page);
     map.put("size", size);
-    map.put("totalElements", totalElements);
+    map.put("totalElements", totalCount);
+
+    map.put(CmmnConst.TOTAL_COUNT, totalCount);
 
     return map;
   }
@@ -101,13 +107,13 @@ public class CmmnResultMap extends HashMap<String, Object> {
   /**
    * 생성
    * 
-   * @param data          데이터
-   * @param pageable      페이지 정보
-   * @param totalElements 전체 건수
+   * @param data       데이터
+   * @param pageable   페이지 정보
+   * @param totalCount 전체 건수
    * @return
    */
-  public static CmmnResultMap of(Object data, Pageable pageable, Long totalElements) {
-    return of(data, pageable.getPageNumber(), pageable.getPageSize(), totalElements);
+  public static CmmnResultMap of(Object data, Pageable pageable, Long totalCount) {
+    return of(data, pageable.getPageNumber(), pageable.getPageSize(), totalCount);
   }
 
   /**
@@ -124,8 +130,13 @@ public class CmmnResultMap extends HashMap<String, Object> {
    * 
    * @param resultCode 결과 코드
    */
+  @Deprecated(since = "20231129 ", forRemoval = true)
   public void putResultCode(String resultCode) {
     this.put(CmmnConst.RESULT_CODE, resultCode);
+  }
+
+  public void putCode(String code) {
+    this.put(CmmnConst.CODE, code);
   }
 
   /**
@@ -133,8 +144,13 @@ public class CmmnResultMap extends HashMap<String, Object> {
    * 
    * @param resultMessage 결과 메시지
    */
+  @Deprecated(since = "20231129 ", forRemoval = true)
   public void putResultMessage(Object resultMessage) {
     this.put(CmmnConst.RESULT_MESSAGE, resultMessage);
+  }
+
+  public void putMessage(Object message) {
+    this.put(CmmnConst.MESSAGE, message);
   }
 
   /**
@@ -160,8 +176,13 @@ public class CmmnResultMap extends HashMap<String, Object> {
    * 
    * @param totalElements 전체 개수
    */
+  @Deprecated
   public void putTotalElements(Long totalElements) {
     this.put("totalElements", totalElements);
+  }
+
+  public void putTotalCount(Long totalCount) {
+    this.put(CmmnConst.TOTAL_COUNT, totalCount);
   }
 
   /**
